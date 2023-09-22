@@ -9,6 +9,14 @@ from typing import TextIO
 
 
 def parse_cli_arguments() -> argparse.Namespace:
+    """
+    Parses command line arguments and returns a Namespace object
+    containing the parsed values.
+
+    Returns:
+        argparse.Namespace:
+        A Namespace object containing the parsed values.
+    """
     argparser = argparse.ArgumentParser()
     argparser.add_argument(
         "filename",
