@@ -171,7 +171,35 @@ def transform_relays(filtered_relays: list) -> dict[str, dict]:
 
 # A-ES (algorithm of Efraimidis and Spirakis)
 # https://maxhalford.github.io/blog/weighted-sampling-without-replacement/
-def weighted_sample_without_replacement(population, weights, k):
+def weighted_sample_without_replacement(
+    population: list, weights: list, k: int
+) -> list:
+    """
+    This function performs weighted sampling without replacement using
+    the A-ES algorithm of Efraimidis and Spirakis.
+
+    Args:
+        population (list):
+        A list of items to sample from.
+
+        weights (list):
+        A list of weights corresponding to each item in the population.
+        The weights must be positive.
+
+        k (int):
+        The number of items to sample from the population.
+
+    Returns:
+        list:
+        A list of k items sampled from the population.
+
+    The A-ES algorithm works by assigning a value v to each item
+    in the population based on its weight. The value v is calculated
+    as the inverse of the weight raised to the power of the random
+    number generated between 0 and 1. The items are then sorted in
+    ascending order based on their values. The last k items in the
+    sorted order are selected as the sampled items.
+    """
     v = [random.random() ** (1 / w) for w in weights]
     order = sorted(range(len(population)), key=lambda i: v[i])
     return [population[i] for i in order[-k:]]
