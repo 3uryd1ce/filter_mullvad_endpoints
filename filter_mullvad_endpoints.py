@@ -63,6 +63,7 @@ def parse_cli_arguments() -> argparse.Namespace:
         dest="NUMBER_OF_ENDPOINTS",
         metavar="NUMBER_OF_ENDPOINTS",
         type=int,
+        default=5,
     )
 
     return argparser.parse_args()
@@ -180,10 +181,11 @@ def transform_relays(filtered_relays: list) -> dict[str, dict]:
     """
     transformed_relays: dict = {}
     for relay in filtered_relays:
-        transformed_relays["hostname"] = {}
+        hostname = relay["hostname"]
+        transformed_relays[hostname] = {}
         for relay_key, relay_value in relay.items():
             if relay_key != "hostname":
-                transformed_relays["hostname"][relay_key] = relay_value
+                transformed_relays[hostname][relay_key] = relay_value
     return transformed_relays
 
 
