@@ -146,6 +146,20 @@ def filter_relays(cli_args: argparse.Namespace, json_data: dict) -> list:
 
 
 def transform_relays(filtered_relays: list) -> dict[str, dict]:
+    """
+    Transforms a list of relay dictionaries into a nested dictionary
+    structure.
+
+    Args:
+        filtered_relays:
+        A list of relay dictionaries. Each dictionary represents a
+        relay and contains key-value pairs.
+
+    Returns:
+        dict[str, dict]:
+        A nested dictionary structure where the keys are hostnames
+        and the values are dictionaries containing relay information.
+    """
     transformed_relays: dict = {}
     for relay in filtered_relays:
         transformed_relays["hostname"] = {}
