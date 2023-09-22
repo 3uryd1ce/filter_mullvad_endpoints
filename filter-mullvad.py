@@ -81,6 +81,18 @@ def compile_regex(potential_regex: str) -> re.Pattern:
 
 
 def init_json_loader(json_file: str | TextIO) -> dict:
+    """
+    Loads a JSON file and returns its contents as a dictionary.
+
+    Args:
+        json_file:
+        The path to the JSON file or a file-like object containing
+        the JSON data.
+
+    Returns:
+        dict:
+        A dictionary containing the contents of the JSON file.
+    """
     if isinstance(json_file, str):
         with open(json_file, encoding="utf-8") as file:
             json_data = json.load(file)
