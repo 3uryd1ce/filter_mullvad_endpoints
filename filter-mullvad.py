@@ -51,6 +51,27 @@ def parse_cli_arguments() -> argparse.Namespace:
 
 
 def compile_regex(potential_regex: str) -> re.Pattern:
+    """
+    Compiles a regular expression pattern.
+
+    This function takes a potential regular expression pattern as
+    input and compiles it into a regular expression object. If the
+    compilation fails, an error message is printed to the standard
+    error stream and the program exits with a status code of 1.
+
+    Args:
+        potential_regex:
+        The potential regular expression pattern to compile.
+
+    Returns:
+        re.Pattern:
+        The compiled regular expression object.
+
+    Raises:
+        re.error:
+        If the regular expression pattern is invalid and cannot be
+        compiled.
+    """
     try:
         compiled_regex = re.compile(potential_regex)
     except re.error as err:
@@ -97,11 +118,10 @@ def filter_relays(cli_args: argparse.Namespace, json_data: dict) -> list:
 def transform_relays(filtered_relays: list) -> dict[str, dict]:
     transformed_relays: dict = {}
     for relay in filtered_relays:
-        hostname = relay["hostname"]
-        transformed_relays[hostname] = {}
+        transformed_relays["hostname"] = {}
         for relay_key, relay_value in relay.items():
             if relay_key != "hostname":
-                transformed_relays[hostname][relay_key] = relay_value
+                transformed_relays["hostname"][relay_key] = relay_value
     return transformed_relays
 
 
