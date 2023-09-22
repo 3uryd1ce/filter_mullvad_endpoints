@@ -208,6 +208,22 @@ def weighted_sample_without_replacement(
 def get_random_weighted_endpoints(
     transformed_relays: dict, number_of_choices: int
 ) -> list:
+    """
+    Returns a list of randomly selected endpoints from a given
+    dictionary of transformed relays, based on their weights.
+
+    Args:
+        transformed_relays (dict):
+        A dictionary containing transformed relays as keys and their
+        corresponding weight as values.
+
+        number_of_choices (int):
+        The number of endpoints to be randomly selected.
+
+    Returns:
+        list:
+        A list of randomly selected endpoints.
+    """
     population = list(transformed_relays.keys())
 
     weights = []
