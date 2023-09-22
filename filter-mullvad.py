@@ -102,6 +102,24 @@ def init_json_loader(json_file: str | TextIO) -> dict:
 
 
 def filter_relays(cli_args: argparse.Namespace, json_data: dict) -> list:
+    """
+    Filters a list of relays based on the provided command line
+    arguments and JSON data.
+
+    Parameters:
+        cli_args:
+        The command line arguments passed to the script.
+
+        json_data:
+        The JSON data containing the list of relays.
+
+    Returns:
+        filtered_relays:
+        The filtered list of relays that match the specified criteria.
+        For instance, if a regular expression for location was given
+        on the command-line, only the relays with a location that
+        matches that regex would be part of the returned list.
+    """
     filtered_relays = []
 
     location_regex = None
