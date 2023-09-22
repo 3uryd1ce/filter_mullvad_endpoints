@@ -39,6 +39,13 @@ def parse_cli_arguments() -> argparse.Namespace:
         dest="PROVIDER_REGEX",
         metavar="PROVIDER_REGEX",
     )
+    argparser.add_argument(
+        "-n",
+        help="Number of matching endpoints to return.",
+        dest="NUMBER_OF_ENDPOINTS",
+        metavar="NUMBER_OF_ENDPOINTS",
+        type=int,
+    )
 
     return argparser.parse_args()
 
@@ -126,7 +133,9 @@ if __name__ == "__main__":
     data = init_json_loader(args.filename)
     relays_as_list = filter_relays(args, data)
     relays_as_dict = transform_relays(relays_as_list)
-    endpoints = get_random_weighted_endpoints(relays_as_dict, 5)
+    endpoints = get_random_weighted_endpoints(
+        relays_as_dict, args.NUMBER_OF_ENDPOINTS
+    )
 
     for endpoint in endpoints:
         print(endpoint)
