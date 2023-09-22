@@ -1,5 +1,15 @@
 #!/usr/bin/env python3
 
+"""
+Receives a JSON file or standard input produced by this API.
+https://api.mullvad.net/public/relays/wireguard/v2
+
+Then, filters out the WireGuard endpoints based on user provided
+criteria. Performs weighted sampling without replacement to gather
+a list of random endpoints. Prints out the hostnames of those
+selected endpoints, one per line.
+"""
+
 import json
 import argparse
 import sys
