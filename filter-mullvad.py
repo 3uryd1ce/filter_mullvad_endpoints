@@ -61,7 +61,7 @@ def compile_regex(potential_regex: str) -> re.Pattern:
 
 def init_json_loader(json_file: str | TextIO) -> dict:
     if isinstance(json_file, str):
-        with open(json_file, "r", encoding="utf-8") as file:
+        with open(json_file, encoding="utf-8") as file:
             json_data = json.load(file)
     else:
         json_data = json.load(json_file)
