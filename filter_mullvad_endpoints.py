@@ -234,11 +234,8 @@ def weighted_sample_without_replacement(
     if not weights:
         raise ValueError("weights must not be empty.")
 
-    if not k:
-        raise ValueError("k must not be empty.")
-
-    if k < 0:
-        raise ValueError("k must be a positive integer.")
+    if k <= 0:
+        raise ValueError("k must be a positive integer greater than zero.")
 
     if len(population) != len(weights):
         raise ValueError("population and weights must be equal length.")

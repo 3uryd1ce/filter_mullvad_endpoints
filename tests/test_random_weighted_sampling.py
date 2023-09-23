@@ -72,7 +72,7 @@ def test_empty_weights(create_sample):
         weighted_sample_without_replacement(population, [], k)
 
 
-def test_empty_k(create_sample):
+def test_zero_k(create_sample):
     """
     Make sure that weighted_sample_without_replacement throws an
     exception when provided 0 for k.
