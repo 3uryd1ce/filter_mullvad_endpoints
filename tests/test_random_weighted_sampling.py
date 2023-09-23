@@ -80,3 +80,16 @@ def test_empty_k(create_sample):
     population, weights, _ = create_sample
     with pytest.raises(ValueError):
         weighted_sample_without_replacement(population, weights, 0)
+
+
+def test_k_eq_population_len(create_sample):
+    """
+    Make sure that weighted_sample_without_replacement successfully
+    returns all elements in the population when k is equal to the
+    length of the entire population.
+    """
+    population, weights, _ = create_sample
+    k = len(population)
+    sample = weighted_sample_without_replacement(population, weights, k)
+    assert len(sample) == len(population)
+    assert set(sample) == set(population)
