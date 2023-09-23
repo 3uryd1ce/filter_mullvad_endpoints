@@ -42,16 +42,6 @@ def test_sample_items(create_sample):
         assert item in population
 
 
-def test_sample_weights(create_sample):
-    """
-    Check if all weights in the sample are present in the weights list.
-    """
-    population, weights, k = create_sample
-    sample = weighted_sample_without_replacement(population, weights, k)
-    for item in sample:
-        assert item in weights
-
-
 def test_sample_unique(create_sample):
     """
     Make sure there are no duplicates in the sample. There shouldn't
