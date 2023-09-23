@@ -85,11 +85,6 @@ def compile_regex(potential_regex: str) -> re.Pattern:
     Returns:
         re.Pattern:
         The compiled regular expression object.
-
-    Raises:
-        re.error:
-        If the regular expression pattern is invalid and cannot be
-        compiled.
     """
     try:
         compiled_regex = re.compile(potential_regex)
