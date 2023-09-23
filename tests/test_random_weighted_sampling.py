@@ -128,3 +128,39 @@ def test_mismatched_weights_and_population(create_sample):
     weights = [i for i in range(1, len(population) // 2)]
     with pytest.raises(ValueError):
         weighted_sample_without_replacement(population, weights, k)
+
+
+def test_zero_in_weights(create_sample):
+    """
+    Make sure that weighted_sample_without_replacement throws an
+    exception when there's a weight with a value of zero.
+    """
+    population, _, k = create_sample
+    weights = [1] * (len(population) - 1)
+    weights.insert(len(population) // 2, 0)
+    with pytest.raises(ValueError):
+        weighted_sample_without_replacement(population, weights, k)
+
+
+def test_negative_in_weights(create_sample):
+    """
+    Make sure that weighted_sample_without_replacement throws an
+    exception when there's a negative weight.
+    """
+    population, _, k = create_sample
+    weights = [1] * (len(population) - 1)
+    weights.insert(len(population) // 2, -1)
+    with pytest.raises(ValueError):
+        weighted_sample_without_replacement(population, weights, k)
+
+
+def test_bad_type_in_weights(create_sample):
+    """
+    Make sure that weighted_sample_without_replacement throws an
+    exception when there's a weight with a bad type.
+    """
+    population, _, k = create_sample
+    weights = [1] * (len(population) - 1)
+    weights.insert(len(population) // 2, "a")
+    with pytest.raises(TypeError):
+        weighted_sample_without_replacement(population, weights, k)

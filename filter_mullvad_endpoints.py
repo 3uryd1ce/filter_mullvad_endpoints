@@ -243,6 +243,14 @@ def weighted_sample_without_replacement(
     if len(population) != len(weights):
         raise ValueError("population and weights must be equal length.")
 
+    for weight in weights:
+        if not isinstance(weight, int):
+            raise TypeError("weights must be integers.")
+        if weight <= 0:
+            raise ValueError(
+                "weights must be positive integers greater than zero."
+            )
+
     v = [random.random() ** (1 / w) for w in weights]
     order = sorted(range(len(population)), key=lambda i: v[i])
     return [population[i] for i in order[-k:]]
