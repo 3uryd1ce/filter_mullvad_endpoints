@@ -117,3 +117,14 @@ def test_large_k(create_sample):
     sample = weighted_sample_without_replacement(population, weights, k)
     assert len(sample) == len(population)
     assert set(sample) == set(population)
+
+
+def test_mismatched_weights_and_population(create_sample):
+    """
+    Make sure that weighted_sample_without_replacement throws an
+    exception when the population and weights have different lengths.
+    """
+    population, _, k = create_sample
+    weights = [i for i in range(1, len(population) // 2)]
+    with pytest.raises(ValueError):
+        weighted_sample_without_replacement(population, weights, k)
