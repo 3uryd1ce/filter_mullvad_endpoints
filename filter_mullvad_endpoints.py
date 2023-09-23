@@ -79,7 +79,7 @@ def compile_regex(potential_regex: str) -> re.Pattern:
     error stream and the program exits with a status code of 1.
 
     Args:
-        potential_regex:
+        potential_regex (str):
         The potential regular expression pattern to compile.
 
     Returns:
@@ -99,7 +99,7 @@ def init_json_loader(json_file: str | typing.TextIO) -> typing.Mapping:
     Loads a JSON file and returns its contents as a mapping.
 
     Args:
-        json_file:
+        json_file (str | typing.TextIO):
         The path to the JSON file or file-like object containing
         the JSON data.
 
@@ -123,10 +123,10 @@ def filter_relays(
     arguments and JSON data.
 
     Args:
-        cli_args:
+        cli_args (argparse.Namespace):
         The command line arguments passed to the script.
 
-        json_data:
+        json_data (typing.Mapping):
         The JSON data containing the list of relays.
 
     Returns:
@@ -169,7 +169,7 @@ def transform_relays(
     structure.
 
     Args:
-        filtered_relays:
+        filtered_relays (typing.Sequence[typing.Mapping]):
         A sequence of relay mappings. Each mapping represents a
         relay and contains key-value pairs.
 
