@@ -15,7 +15,7 @@ import argparse
 import sys
 import re
 import random
-from typing import TextIO
+import typing
 
 
 def parse_cli_arguments() -> argparse.Namespace:
@@ -94,7 +94,7 @@ def compile_regex(potential_regex: str) -> re.Pattern:
     return compiled_regex
 
 
-def init_json_loader(json_file: str | TextIO) -> dict:
+def init_json_loader(json_file: str | typing.TextIO) -> dict:
     """
     Loads a JSON file and returns its contents as a dictionary.
 
@@ -187,19 +187,19 @@ def transform_relays(filtered_relays: list) -> dict[str, dict]:
 # A-ES (algorithm of Efraimidis and Spirakis)
 # https://maxhalford.github.io/blog/weighted-sampling-without-replacement/
 def weighted_sample_without_replacement(
-    population: list, weights: list, k: int
-) -> list:
+    population: typing.Sequence, weights: typing.Sequence[int], k: int
+) -> typing.Sequence:
     """
     This function performs weighted sampling without replacement using
     the A-ES algorithm of Efraimidis and Spirakis.
 
     Args:
-        population (list):
-        A list of items to sample from.
+        population (typing.Sequence):
+        A sequence of items to sample from.
 
-        weights (list):
-        A list of weights corresponding to each item in the population.
-        The weights must be positive.
+        weights (typing.Sequence[int]):
+        A sequence of weights corresponding to each item in the population.
+        The weights must be integers.
 
         k (int):
         The number of items to sample from the population.
@@ -215,20 +215,38 @@ def weighted_sample_without_replacement(
     ascending order based on their values. The last k items in the
     sorted order are selected as the sampled items.
     """
+    if not isinstance(population, typing.Sequence):
+        raise TypeError("population must be a Sequence.")
+
+    if not isinstance(weights, typing.Sequence):
+        raise TypeError("weights must be a Sequence.")
+
+    if not isinstance(k, int):
+        raise TypeError("k must be an integer.")
+
+    if not population:
+        raise ValueError("population must not be empty.")
+
+    if not weights:
+        raise ValueError("weights must not be empty.")
+
+    if not k:
+        raise ValueError("k must not be empty.")
+
     v = [random.random() ** (1 / w) for w in weights]
     order = sorted(range(len(population)), key=lambda i: v[i])
     return [population[i] for i in order[-k:]]
 
 
 def get_random_weighted_endpoints(
-    transformed_relays: dict, number_of_choices: int
-) -> list:
+    transformed_relays: typing.Mapping, number_of_choices: int
+) -> typing.Sequence:
     """
     Returns a list of randomly selected endpoints from a given
     dictionary of transformed relays, based on their weights.
 
     Args:
-        transformed_relays (dict):
+        transformed_relays (typing.Mapping):
         A dictionary containing transformed relays as keys and their
         corresponding weight as values.
 
@@ -236,8 +254,8 @@ def get_random_weighted_endpoints(
         The number of endpoints to be randomly selected.
 
     Returns:
-        list:
-        A list of randomly selected endpoints.
+        typing.Sequence:
+        A sequence of randomly selected endpoints.
     """
     population = list(transformed_relays.keys())
 

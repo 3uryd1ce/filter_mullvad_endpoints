@@ -16,9 +16,9 @@ def create_sample():
     Fixture that creates the sample parameters needed for
     weighted_sample_without_replacement to run.
     """
-    population = range(1, 201)
-    weights = range(1, 201)
-    k = 50
+    population = [i for i in range(1, 10)]
+    weights = [i for i in range(1, 10)]
+    k = 5
 
     return population, weights, k
 
@@ -50,3 +50,33 @@ def test_sample_unique(create_sample):
     population, weights, k = create_sample
     sample = weighted_sample_without_replacement(population, weights, k)
     assert len(set(sample)) == k
+
+
+def test_empty_population(create_sample):
+    """
+    Make sure that weighted_sample_without_replacement throws an
+    exception when provided an empty population.
+    """
+    _, weights, k = create_sample
+    with pytest.raises(ValueError):
+        weighted_sample_without_replacement([], weights, k)
+
+
+def test_empty_weights(create_sample):
+    """
+    Make sure that weighted_sample_without_replacement throws an
+    exception when provided an empty weights list.
+    """
+    population, _, k = create_sample
+    with pytest.raises(ValueError):
+        weighted_sample_without_replacement(population, [], k)
+
+
+def test_empty_k(create_sample):
+    """
+    Make sure that weighted_sample_without_replacement throws an
+    exception when provided 0 for k.
+    """
+    population, weights, _ = create_sample
+    with pytest.raises(ValueError):
+        weighted_sample_without_replacement(population, weights, 0)
