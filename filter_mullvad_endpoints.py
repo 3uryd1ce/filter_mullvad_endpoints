@@ -237,6 +237,9 @@ def weighted_sample_without_replacement(
     if not k:
         raise ValueError("k must not be empty.")
 
+    if k < 0:
+        raise ValueError("k must be a positive integer.")
+
     v = [random.random() ** (1 / w) for w in weights]
     order = sorted(range(len(population)), key=lambda i: v[i])
     return [population[i] for i in order[-k:]]

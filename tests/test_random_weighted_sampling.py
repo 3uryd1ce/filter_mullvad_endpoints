@@ -93,3 +93,14 @@ def test_k_eq_population_len(create_sample):
     sample = weighted_sample_without_replacement(population, weights, k)
     assert len(sample) == len(population)
     assert set(sample) == set(population)
+
+
+def test_negative_k(create_sample):
+    """
+    Make sure that weighted_sample_without_replacement throws an
+    exception when k is a negative number.
+    """
+    population, weights, _ = create_sample
+    k = -1
+    with pytest.raises(ValueError):
+        weighted_sample_without_replacement(population, weights, k)
