@@ -1,5 +1,10 @@
 #!/usr/bin/env python3
 
+"""
+Tests to make sure that the compile_regex function in
+filter_mullvad_endpoints works properly.
+"""
+
 import re
 from filter_mullvad_endpoints import compile_regex
 
