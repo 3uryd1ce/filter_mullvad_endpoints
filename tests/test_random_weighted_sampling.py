@@ -1,5 +1,11 @@
 #!/usr/bin/env python3
 
+"""
+Tests to make sure that the weighted_sample_without_replacement function
+in filter_mullvad_endpoints works properly.
+"""
+
+
 import pytest
 from filter_mullvad_endpoints import weighted_sample_without_replacement
 
