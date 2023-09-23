@@ -94,18 +94,18 @@ def compile_regex(potential_regex: str) -> re.Pattern:
     return compiled_regex
 
 
-def init_json_loader(json_file: str | typing.TextIO) -> dict:
+def init_json_loader(json_file: str | typing.TextIO) -> typing.Mapping:
     """
-    Loads a JSON file and returns its contents as a dictionary.
+    Loads a JSON file and returns its contents as a mapping.
 
     Args:
         json_file:
-        The path to the JSON file or a file-like object containing
+        The path to the JSON file or file-like object containing
         the JSON data.
 
     Returns:
-        dict:
-        A dictionary containing the contents of the JSON file.
+        typing.Mapping:
+        A mapping containing the contents of the JSON file.
     """
     if isinstance(json_file, str):
         with open(json_file, encoding="utf-8") as file:
@@ -115,12 +115,14 @@ def init_json_loader(json_file: str | typing.TextIO) -> dict:
     return json_data
 
 
-def filter_relays(cli_args: argparse.Namespace, json_data: dict) -> list:
+def filter_relays(
+    cli_args: argparse.Namespace, json_data: typing.Mapping
+) -> typing.Sequence:
     """
-    Filters a list of relays based on the provided command line
+    Filters a sequence of relays based on the provided command line
     arguments and JSON data.
 
-    Parameters:
+    Args:
         cli_args:
         The command line arguments passed to the script.
 
@@ -128,7 +130,7 @@ def filter_relays(cli_args: argparse.Namespace, json_data: dict) -> list:
         The JSON data containing the list of relays.
 
     Returns:
-        filtered_relays:
+        typing.Sequence:
         The filtered list of relays that match the specified criteria.
         For instance, if a regular expression for location was given
         on the command-line, only the relays with a location that
@@ -159,20 +161,22 @@ def filter_relays(cli_args: argparse.Namespace, json_data: dict) -> list:
     return filtered_relays
 
 
-def transform_relays(filtered_relays: list) -> dict[str, dict]:
+def transform_relays(
+    filtered_relays: typing.Sequence[typing.Mapping],
+) -> typing.Mapping[str, typing.Mapping]:
     """
-    Transforms a list of relay dictionaries into a nested dictionary
+    Transforms a sequence of relay mappings into a nested mapping
     structure.
 
     Args:
         filtered_relays:
-        A list of relay dictionaries. Each dictionary represents a
+        A sequence of relay mappings. Each mapping represents a
         relay and contains key-value pairs.
 
     Returns:
-        dict[str, dict]:
-        A nested dictionary structure where the keys are hostnames
-        and the values are dictionaries containing relay information.
+        typing.Mapping[str, typing.Mapping]:
+        A nested mapping structure where the keys are hostnames and
+        the values are mappings containing relay information.
     """
     transformed_relays: dict = {}
     for relay in filtered_relays:
@@ -205,8 +209,8 @@ def weighted_sample_without_replacement(
         The number of items to sample from the population.
 
     Returns:
-        list:
-        A list of k items sampled from the population.
+        typing.Sequence:
+        A sequence of k items sampled from the population.
 
     The A-ES algorithm works by assigning a value v to each item
     in the population based on its weight. The value v is calculated
@@ -242,12 +246,12 @@ def get_random_weighted_endpoints(
     transformed_relays: typing.Mapping, number_of_choices: int
 ) -> typing.Sequence:
     """
-    Returns a list of randomly selected endpoints from a given
-    dictionary of transformed relays, based on their weights.
+    Returns a sequence of randomly selected endpoints from a given
+    mapping of transformed relays, based on their weights.
 
     Args:
         transformed_relays (typing.Mapping):
-        A dictionary containing transformed relays as keys and their
+        A mapping containing transformed relays as keys and their
         corresponding weight as values.
 
         number_of_choices (int):
