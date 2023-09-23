@@ -104,3 +104,16 @@ def test_negative_k(create_sample):
     k = -1
     with pytest.raises(ValueError):
         weighted_sample_without_replacement(population, weights, k)
+
+
+def test_large_k(create_sample):
+    """
+    Make sure that weighted_sample_without_replacement successfully
+    returns all elements in the population when k is greater than
+    the length of the entire population.
+    """
+    population, weights, _ = create_sample
+    k = 5000
+    sample = weighted_sample_without_replacement(population, weights, k)
+    assert len(sample) == len(population)
+    assert set(sample) == set(population)
