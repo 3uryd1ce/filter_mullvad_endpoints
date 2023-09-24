@@ -26,7 +26,19 @@ def test_invalid_regex():
     pattern = r"["
     try:
         compile_regex(pattern)
+        assert False, "Expected SystemExit exception"
     except SystemExit as e:
         assert e.code == 1
-    else:
-        assert False, "Expected SystemExit exception"
+
+
+def test_incorrect_type():
+    """
+    Make sure compile_regex throws an exception when an invalid
+    type is provided.
+    """
+    pattern = []
+    try:
+        compile_regex(pattern)
+        assert False, "Expected TypeError exception"
+    except TypeError:
+        pass
