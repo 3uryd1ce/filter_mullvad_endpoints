@@ -240,7 +240,7 @@ def weighted_sample_without_replacement(
 
 
 def get_random_weighted_endpoints(
-    transformed_relays: typing.Mapping, number_of_choices: int
+    transformed_relays: typing.Mapping, number_of_endpoints: int
 ) -> typing.Sequence:
     """
     Returns a sequence of randomly selected endpoints from a given
@@ -251,21 +251,21 @@ def get_random_weighted_endpoints(
         A mapping containing transformed relays as keys and their
         corresponding weight as values.
 
-        number_of_choices (int):
+        number_of_endpoints (int):
         The number of endpoints to be randomly selected.
 
     Returns:
         typing.Sequence:
         A sequence of randomly selected endpoints.
     """
-    population = list(transformed_relays.keys())
-
+    population = []
     weights = []
-    for relay, _ in transformed_relays.items():
+    for relay in transformed_relays.keys():
+        population.append(relay)
         weights.append(transformed_relays[relay]["weight"])
 
     return weighted_sample_without_replacement(
-        population, weights, number_of_choices
+        population, weights, number_of_endpoints
     )
 
 
