@@ -260,9 +260,9 @@ def get_random_weighted_endpoints(
     """
     population = []
     weights = []
-    for relay in transformed_relays.keys():
+    for relay, relay_data in transformed_relays.items():
         population.append(relay)
-        weights.append(transformed_relays[relay]["weight"])
+        weights.append(relay_data["weight"])
 
     return weighted_sample_without_replacement(
         population, weights, number_of_endpoints
