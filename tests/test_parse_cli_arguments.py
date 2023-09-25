@@ -1,8 +1,9 @@
 #!/usr/bin/env python3
 
-from filter_mullvad_endpoints import parse_cli_arguments
-
+import re
 import sys
+
+from filter_mullvad_endpoints import parse_cli_arguments
 
 
 def test_with_file(monkeypatch):
@@ -41,6 +42,7 @@ def test_owned_only(monkeypatch):
     assert arguments.OWNED_ONLY is True
 
 
+# TODO: add tests for invalid regexps (-l and -p need these)
 def test_location_regex(monkeypatch):
     regex = "^it-(mil|rom)$"
     monkeypatch.setattr(
@@ -48,7 +50,7 @@ def test_location_regex(monkeypatch):
         ["script.py", "-l", regex],
     )
     arguments = parse_cli_arguments()
-    assert arguments.LOCATION_REGEX == regex
+    assert arguments.LOCATION_REGEX == re.compile(regex)
 
 
 def test_provider_regex(monkeypatch):
@@ -58,7 +60,7 @@ def test_provider_regex(monkeypatch):
         ["script.py", "-p", regex],
     )
     arguments = parse_cli_arguments()
-    assert arguments.PROVIDER_REGEX == regex
+    assert arguments.PROVIDER_REGEX == re.compile(regex)
 
 
 def test_num_endpoints(monkeypatch):

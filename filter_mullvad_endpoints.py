@@ -66,32 +66,23 @@ def parse_cli_arguments() -> argparse.Namespace:
         default=5,
     )
 
-    return argparser.parse_args()
+    arguments = argparser.parse_args()
 
+    if arguments.LOCATION_REGEX:
+        try:
+            arguments.LOCATION_REGEX = re.compile(arguments.LOCATION_REGEX)
+        except re.error as err:
+            print(f"-l regexp failed to compile: {err}", file=sys.stderr)
+            sys.exit(1)
 
-def compile_regex(potential_regex: str) -> re.Pattern:
-    """
-    Compiles a regular expression pattern.
+    if arguments.PROVIDER_REGEX:
+        try:
+            arguments.PROVIDER_REGEX = re.compile(arguments.PROVIDER_REGEX)
+        except re.error as err:
+            print(f"-p regexp failed to compile: {err}", file=sys.stderr)
+            sys.exit(1)
 
-    This function takes a potential regular expression pattern as
-    input and compiles it into a regular expression object. If the
-    compilation fails, an error message is printed to the standard
-    error stream and the program exits with a status code of 1.
-
-    Args:
-        potential_regex (str):
-        The potential regular expression pattern to compile.
-
-    Returns:
-        re.Pattern:
-        The compiled regular expression object.
-    """
-    try:
-        compiled_regex = re.compile(potential_regex)
-    except re.error as err:
-        print(f"regexp failed to compile: {err}", file=sys.stderr)
-        sys.exit(1)
-    return compiled_regex
+    return arguments
 
 
 def init_json_loader(json_file: str | typing.TextIO) -> typing.Mapping:
@@ -138,13 +129,8 @@ def filter_relays(
     """
     filtered_relays = []
 
-    location_regex = None
-    if cli_args.LOCATION_REGEX:
-        location_regex = compile_regex(cli_args.LOCATION_REGEX)
-
-    provider_regex = None
-    if cli_args.PROVIDER_REGEX:
-        provider_regex = compile_regex(cli_args.PROVIDER_REGEX)
+    location_regex = cli_args.LOCATION_REGEX
+    provider_regex = cli_args.PROVIDER_REGEX
 
     for relay in json_data["wireguard"]["relays"]:
         if cli_args.ACTIVE_ONLY and not relay["active"]:
