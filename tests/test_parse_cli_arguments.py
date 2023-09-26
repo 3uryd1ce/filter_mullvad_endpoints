@@ -3,6 +3,8 @@
 import re
 import sys
 
+import pytest
+
 from filter_mullvad_endpoints import parse_cli_arguments
 
 
@@ -42,7 +44,6 @@ def test_owned_only(monkeypatch):
     assert arguments.OWNED_ONLY is True
 
 
-# TODO: add tests for invalid regexps (-l and -p need these)
 def test_location_regex(monkeypatch):
     regex = "^it-(mil|rom)$"
     monkeypatch.setattr(
@@ -53,6 +54,16 @@ def test_location_regex(monkeypatch):
     assert arguments.LOCATION_REGEX == re.compile(regex)
 
 
+def test_invalid_location_regex(monkeypatch):
+    regex = "^it-("
+    monkeypatch.setattr(
+        "sys.argv",
+        ["script.py", "-l", regex],
+    )
+    with pytest.raises(SystemExit):
+        parse_cli_arguments()
+
+
 def test_provider_regex(monkeypatch):
     regex = "^(31173|DataPacket)$"
     monkeypatch.setattr(
@@ -61,6 +72,16 @@ def test_provider_regex(monkeypatch):
     )
     arguments = parse_cli_arguments()
     assert arguments.PROVIDER_REGEX == re.compile(regex)
+
+
+def test_invalid_provider_regex(monkeypatch):
+    regex = "^(31173|"
+    monkeypatch.setattr(
+        "sys.argv",
+        ["script.py", "-p", regex],
+    )
+    with pytest.raises(SystemExit):
+        parse_cli_arguments()
 
 
 def test_num_endpoints(monkeypatch):
