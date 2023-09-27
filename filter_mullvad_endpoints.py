@@ -10,11 +10,11 @@ a list of random endpoints. Prints out the hostnames of those
 selected endpoints, one per line.
 """
 
-import json
 import argparse
-import sys
-import re
+import json
 import random
+import re
+import sys
 import typing
 
 
