@@ -91,3 +91,12 @@ def test_num_endpoints(monkeypatch):
     )
     arguments = parse_cli_arguments()
     assert arguments.NUMBER_OF_ENDPOINTS == 10
+
+
+def test_invalid_num_endpoints(monkeypatch):
+    monkeypatch.setattr(
+        "sys.argv",
+        ["script.py", "-n", "a"],
+    )
+    with pytest.raises(SystemExit):
+        parse_cli_arguments()
