@@ -6,14 +6,19 @@ filter_mullvad_endpoints works properly.
 """
 
 
-import json
 from io import StringIO
+import json
+
+import pytest
+
 from filter_mullvad_endpoints import init_json_loader
 
 
-def test_valid_file():
+def test_valid_file(tmp_path):
     """Make sure that init_json_loader works with valid files."""
-    json_file_path = "test.json"
+    tmpdir = tmp_path / "subdir"
+    tmpdir.mkdir()
+    json_file_path = f"{tmpdir}/test.json"
     expected_output = {"key": "value"}
     with open(json_file_path, "w", encoding="utf-8") as file:
         json.dump(expected_output, file)
