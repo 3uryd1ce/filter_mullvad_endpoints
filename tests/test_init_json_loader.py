@@ -2,7 +2,7 @@
 
 """
 Tests to make sure the init_json_loader function in
-filter_mullvad_endpoints works properly.
+random_mullvad_endpoints works properly.
 """
 
 
@@ -11,7 +11,7 @@ import json
 
 import pytest
 
-from filter_mullvad_endpoints import init_json_loader
+from random_mullvad_endpoints import init_json_loader
 
 
 def test_valid_file(tmp_path):

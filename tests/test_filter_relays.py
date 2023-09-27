@@ -4,7 +4,7 @@ import json
 
 import pytest
 
-from filter_mullvad_endpoints import filter_relays, parse_cli_arguments
+from random_mullvad_endpoints import filter_relays, parse_cli_arguments
 
 
 test_json = """

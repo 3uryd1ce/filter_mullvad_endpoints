@@ -1,6 +1,6 @@
-# filter_mullvad_endpoints
+# random_mullvad_endpoints
 
-`filter_mullvad_endpoints` reads JSON created by Mullvad's
+`random_mullvad_endpoints` reads JSON created by Mullvad's
 `/relays/wireguard/v2` API endpoint and filters based on specified
 criteria. These include regular expressions for the location and
 provider. To present the final list of hostnames in a random order,

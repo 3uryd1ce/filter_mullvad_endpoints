@@ -5,7 +5,7 @@ import sys
 
 import pytest
 
-from filter_mullvad_endpoints import parse_cli_arguments
+from random_mullvad_endpoints import parse_cli_arguments
 
 
 def test_with_file(monkeypatch):

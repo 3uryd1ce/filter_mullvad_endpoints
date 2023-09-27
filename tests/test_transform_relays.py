@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-from filter_mullvad_endpoints import transform_relays
+from random_mullvad_endpoints import transform_relays
 
 filtered_relays = [
     {
