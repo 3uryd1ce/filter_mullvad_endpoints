@@ -8,6 +8,7 @@ random_mullvad_endpoints works properly.
 
 from io import StringIO
 import json
+import sys
 
 import pytest
 
@@ -34,6 +35,18 @@ def test_valid_file_object():
     expected_output = {"key": "value"}
     json_file_object = StringIO(json_data)
     assert init_json_loader(json_file_object) == expected_output
+
+
+def test_stdin(monkeypatch):
+    """
+    Make sure that init_json_loader can accept STDIN.
+    """
+    json_data = '{"key": "value"}'
+    expected_output = {"key": "value"}
+    monkeypatch.setattr(
+        "sys.stdin", StringIO(json_data)
+    )
+    assert init_json_loader("-") == expected_output
 
 
 def test_invalid_file():

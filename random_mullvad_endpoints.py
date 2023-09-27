@@ -113,6 +113,9 @@ def init_json_loader(json_file: str | typing.TextIO) -> typing.Mapping:
         typing.Mapping:
         A mapping containing the contents of the JSON file.
     """
+    if json_file == "-":
+        json_file = sys.stdin
+
     if isinstance(json_file, str):
         with open(json_file, encoding="utf-8") as file:
             json_data = json.load(file)
