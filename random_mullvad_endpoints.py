@@ -213,10 +213,20 @@ def create_filtered_json(
     Notes:
         The function creates a deep copy of the JSON data to avoid
         modifying the original data.
+
+        If json_data was the only parameter provided, the function
+        simply returns json_data as is.
     """
-    # TODO: consider short circuiting if no options besides json_data
-    # were specified. This will probably result in a savings in memory
-    # and performance because no deep copy + iteration is necessary.
+
+    filter_opts = [cli_args, allowed_hostnames]
+    active_opts = 0
+    for opt in filter_opts:
+        if opt:
+            active_opts += 1
+    if active_opts == 0:
+        return json_data
+    del filter_opts, active_opts
+
     new_json = copy.deepcopy(json_data)
     new_json["wireguard"]["relays"] = []
     new_json["locations"] = {}
