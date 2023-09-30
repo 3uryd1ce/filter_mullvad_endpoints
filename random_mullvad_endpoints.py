@@ -81,6 +81,12 @@ def parse_cli_arguments() -> argparse.Namespace:
         type=int,
         default=5,
     )
+    argparser.add_argument(
+        "-N",
+        help="Only print hostnames, rather than the filtered JSON.",
+        dest="PRINT_HOSTNAMES_ONLY",
+        action="store_true",
+    )
 
     arguments = argparser.parse_args()
 
@@ -125,54 +131,103 @@ def init_json_loader(json_file: str | typing.TextIO) -> dict:
     return json_data
 
 
-def filter_relays(
-    cli_args: argparse.Namespace, json_data: dict
-) -> dict:
+def is_matching_relay(
+    relay: dict,
+    cli_args: typing.Optional[argparse.Namespace] = None,
+    allowed_hostnames: typing.Optional[typing.Sequence] = None,
+) -> bool:
     """
-    Filters WireGuard relays based on the provided command line
-    arguments and JSON data.
+    Determines if a WireGuard relay matches the specified criteria.
 
     Args:
-        cli_args (argparse.Namespace):
-        The command line arguments passed to the script.
+        relay (dict):
+        A dictionary representing a WireGuard relay.
 
-        json_data (typing.Mapping):
-        A JSON object containing the list of relays.
+        cli_args (argparse.Namespace, optional):
+        Command line arguments. Defaults to None.
+
+        allowed_hostnames (typing.Sequence, optional):
+        A sequence of allowed hostnames. Defaults to None.
 
     Returns:
-        dict:
-        A JSON object that's mostly identical to json_data, except
-        the WireGuard relays only include the relays that match the
-        specified criteria. For instance, if a regular expression
-        for location was given on the command-line, only the relays
-        with a matching location would be included.
+        bool: True if the relay matches the criteria, False otherwise.
 
-        The locations are also changed accordingly, so that only
-        the locations referenced by at least one WireGuard relay
-        are part of the JSON.
+    Notes:
+        If no criteria is given, the function will return True for
+        any relay.
+
+        If allowed_hostnames is provided, the function checks if
+        the relay's hostname is in the list.
+
+        If cli_args is provided, the function applies additional
+        criteria to determine if the relay matches. For instance,
+        if -l was passed on the command line, the location is
+        checked against the provided regular expression.
     """
-    filtered_relays = copy.deepcopy(json_data)
-    filtered_relays["wireguard"]["relays"] = []
-    filtered_relays["locations"] = {}
+    if allowed_hostnames and relay["hostname"] not in allowed_hostnames:
+        return False
 
-    location_regex = cli_args.LOCATION_REGEX
-    provider_regex = cli_args.PROVIDER_REGEX
+    if cli_args:
+        location_regex = cli_args.LOCATION_REGEX
+        provider_regex = cli_args.PROVIDER_REGEX
+
+        if cli_args.ACTIVE_ONLY and not relay["active"]:
+            return False
+        if cli_args.OWNED_ONLY and not relay["owned"]:
+            return False
+        if location_regex and not location_regex.match(relay["location"]):
+            return False
+        if provider_regex and not provider_regex.match(relay["provider"]):
+            return False
+
+    return True
+
+
+def create_filtered_json(
+    json_data: dict,
+    cli_args: typing.Optional[argparse.Namespace] = None,
+    allowed_hostnames: typing.Optional[typing.Sequence] = None,
+) -> dict:
+    """
+    Create a filtered version of the given JSON data, based on the
+    specified criteria.
+
+    Args:
+        json_data (dict):
+        The JSON data containing WireGuard relays and their locations.
+
+        cli_args (argparse.Namespace, optional):
+        The command line arguments specifying additional filtering
+        criteria. Defaults to None.
+
+        allowed_hostnames (Sequence, optional):
+        The list of allowed hostnames for filtering. Defaults to
+        None.
+
+    Returns:
+        filtered_relays (dict):
+        The filtered JSON data. The relays and locations are modified
+        such that only those that match the specified criteria are
+        included.
+
+    Notes:
+        The function creates a deep copy of the JSON data to avoid
+        modifying the original data.
+    """
+    # TODO: consider short circuiting if no options besides json_data
+    # were specified. This will probably result in a savings in memory
+    # and performance because no deep copy + iteration is necessary.
+    new_json = copy.deepcopy(json_data)
+    new_json["wireguard"]["relays"] = []
+    new_json["locations"] = {}
 
     for relay in json_data["wireguard"]["relays"]:
-        if cli_args.ACTIVE_ONLY and not relay["active"]:
-            continue
-        if cli_args.OWNED_ONLY and not relay["owned"]:
-            continue
-        if location_regex and not location_regex.match(relay["location"]):
-            continue
-        if provider_regex and not provider_regex.match(relay["provider"]):
-            continue
+        if is_matching_relay(relay, cli_args, allowed_hostnames):
+            new_json["wireguard"]["relays"].append(relay)
+            place = relay["location"]
+            new_json["locations"][place] = json_data["locations"][place]
 
-        filtered_relays["wireguard"]["relays"].append(relay)
-        place = relay["location"]
-        filtered_relays["locations"][place] = json_data["locations"][place]
-
-    return filtered_relays
+    return new_json
 
 
 # A-ES (algorithm of Efraimidis and Spirakis)
@@ -274,11 +329,18 @@ if __name__ == "__main__":
     args = parse_cli_arguments()
 
     data = init_json_loader(args.filename)
-    desired_relays = filter_relays(args, data)
-
+    filtered_json = create_filtered_json(data, args)
     endpoint_hostnames = get_random_weighted_endpoints(
-        desired_relays, args.NUMBER_OF_ENDPOINTS
+        filtered_json, args.NUMBER_OF_ENDPOINTS
     )
 
-    for hostname in endpoint_hostnames:
-        print(hostname)
+    if args.PRINT_HOSTNAMES_ONLY:
+        for hostname in endpoint_hostnames:
+            print(hostname)
+        sys.exit(0)
+
+    filtered_json = create_filtered_json(
+        filtered_json, allowed_hostnames=endpoint_hostnames
+    )
+    json.dump(filtered_json, sys.stdout)
+    print()

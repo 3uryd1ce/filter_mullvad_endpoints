@@ -4,7 +4,7 @@ import json
 
 import pytest
 
-from random_mullvad_endpoints import filter_relays, parse_cli_arguments
+from random_mullvad_endpoints import create_filtered_json, parse_cli_arguments
 
 
 test_json = """
@@ -89,7 +89,7 @@ def test_no_filter(monkeypatch):
         ["script.py"],
     )
     arguments = parse_cli_arguments()
-    filtered_relays = filter_relays(arguments, json_as_dict)
+    filtered_relays = create_filtered_json(json_as_dict, arguments)
 
     assert len(filtered_relays["wireguard"]["relays"]) == 3
 
@@ -101,7 +101,7 @@ def test_active_relays(monkeypatch):
         ["script.py", "-a"],
     )
     arguments = parse_cli_arguments()
-    filtered_relays = filter_relays(arguments, json_as_dict)
+    filtered_relays = create_filtered_json(json_as_dict, arguments)
     wireguard_relays = filtered_relays["wireguard"]["relays"]
 
     assert len(wireguard_relays) == 1
@@ -115,7 +115,7 @@ def test_owned_relays(monkeypatch):
         ["script.py", "-o"],
     )
     arguments = parse_cli_arguments()
-    filtered_relays = filter_relays(arguments, json_as_dict)
+    filtered_relays = create_filtered_json(json_as_dict, arguments)
     wireguard_relays = filtered_relays["wireguard"]["relays"]
 
     assert len(wireguard_relays) == 1
@@ -129,7 +129,7 @@ def test_relay_one_location(monkeypatch):
         ["script.py", "-l", "^it-rom$"],
     )
     arguments = parse_cli_arguments()
-    filtered_relays = filter_relays(arguments, json_as_dict)
+    filtered_relays = create_filtered_json(json_as_dict, arguments)
     wireguard_relays = filtered_relays["wireguard"]["relays"]
 
     assert len(wireguard_relays) == 1
@@ -143,7 +143,7 @@ def test_relay_two_locations(monkeypatch):
         ["script.py", "-l", "^(it-rom|za-jnb)$"],
     )
     arguments = parse_cli_arguments()
-    filtered_relays = filter_relays(arguments, json_as_dict)
+    filtered_relays = create_filtered_json(json_as_dict, arguments)
     wireguard_relays = filtered_relays["wireguard"]["relays"]
 
     assert len(wireguard_relays) == 2
@@ -160,7 +160,7 @@ def test_relay_one_provider(monkeypatch):
         ["script.py", "-p", "^DataPacket$"],
     )
     arguments = parse_cli_arguments()
-    filtered_relays = filter_relays(arguments, json_as_dict)
+    filtered_relays = create_filtered_json(json_as_dict, arguments)
     wireguard_relays = filtered_relays["wireguard"]["relays"]
 
     assert len(wireguard_relays) == 1
@@ -174,7 +174,7 @@ def test_relay_two_providers(monkeypatch):
         ["script.py", "-p", "^(DataPacket|31173)$"],
     )
     arguments = parse_cli_arguments()
-    filtered_relays = filter_relays(arguments, json_as_dict)
+    filtered_relays = create_filtered_json(json_as_dict, arguments)
     wireguard_relays = filtered_relays["wireguard"]["relays"]
 
     assert len(wireguard_relays) == 2
@@ -191,7 +191,7 @@ def test_multiple_filters(monkeypatch):
         ["script.py", "-p", "^DataPacket$", "-l", "^za-jnb$"],
     )
     arguments = parse_cli_arguments()
-    filtered_relays = filter_relays(arguments, json_as_dict)
+    filtered_relays = create_filtered_json(json_as_dict, arguments)
     wireguard_relays = filtered_relays["wireguard"]["relays"]
 
     assert len(wireguard_relays) == 1
