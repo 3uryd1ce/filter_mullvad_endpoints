@@ -26,6 +26,7 @@ selected endpoints, one per line.
 """
 
 import argparse
+import copy
 import json
 import random
 import re
@@ -100,7 +101,7 @@ def parse_cli_arguments() -> argparse.Namespace:
     return arguments
 
 
-def init_json_loader(json_file: str | typing.TextIO) -> typing.Mapping:
+def init_json_loader(json_file: str | typing.TextIO) -> dict:
     """
     Loads a JSON file and returns its contents as a mapping.
 
@@ -110,8 +111,8 @@ def init_json_loader(json_file: str | typing.TextIO) -> typing.Mapping:
         the JSON data.
 
     Returns:
-        typing.Mapping:
-        A mapping containing the contents of the JSON file.
+        dict:
+        A JSON object that holds the contents of the JSON file.
     """
     if json_file == "-":
         json_file = sys.stdin
@@ -125,10 +126,10 @@ def init_json_loader(json_file: str | typing.TextIO) -> typing.Mapping:
 
 
 def filter_relays(
-    cli_args: argparse.Namespace, json_data: typing.Mapping
-) -> typing.Sequence:
+    cli_args: argparse.Namespace, json_data: dict
+) -> dict:
     """
-    Filters a sequence of relays based on the provided command line
+    Filters WireGuard relays based on the provided command line
     arguments and JSON data.
 
     Args:
@@ -136,16 +137,23 @@ def filter_relays(
         The command line arguments passed to the script.
 
         json_data (typing.Mapping):
-        The JSON data containing the list of relays.
+        A JSON object containing the list of relays.
 
     Returns:
-        typing.Sequence:
-        The filtered list of relays that match the specified criteria.
-        For instance, if a regular expression for location was given
-        on the command-line, only the relays with a location that
-        matches that regex would be part of the returned list.
+        dict:
+        A JSON object that's mostly identical to json_data, except
+        the WireGuard relays only include the relays that match the
+        specified criteria. For instance, if a regular expression
+        for location was given on the command-line, only the relays
+        with a matching location would be included.
+
+        The locations are also changed accordingly, so that only
+        the locations referenced by at least one WireGuard relay
+        are part of the JSON.
     """
-    filtered_relays = []
+    filtered_relays = copy.deepcopy(json_data)
+    filtered_relays["wireguard"]["relays"] = []
+    filtered_relays["locations"] = {}
 
     location_regex = cli_args.LOCATION_REGEX
     provider_regex = cli_args.PROVIDER_REGEX
@@ -160,36 +168,11 @@ def filter_relays(
         if provider_regex and not provider_regex.match(relay["provider"]):
             continue
 
-        filtered_relays.append(relay)
+        filtered_relays["wireguard"]["relays"].append(relay)
+        place = relay["location"]
+        filtered_relays["locations"][place] = json_data["locations"][place]
 
     return filtered_relays
-
-
-def transform_relays(
-    filtered_relays: typing.Sequence[typing.Mapping],
-) -> typing.Mapping[str, typing.Mapping]:
-    """
-    Transforms a sequence of relay mappings into a nested mapping
-    structure.
-
-    Args:
-        filtered_relays (typing.Sequence[typing.Mapping]):
-        A sequence of relay mappings. Each mapping represents a
-        relay and contains key-value pairs.
-
-    Returns:
-        typing.Mapping[str, typing.Mapping]:
-        A nested mapping structure where the keys are hostnames and
-        the values are mappings containing relay information.
-    """
-    transformed_relays: dict = {}
-    for relay in filtered_relays:
-        hostname = relay["hostname"]
-        transformed_relays[hostname] = {}
-        for relay_key, relay_value in relay.items():
-            if relay_key != "hostname":
-                transformed_relays[hostname][relay_key] = relay_value
-    return transformed_relays
 
 
 # A-ES (algorithm of Efraimidis and Spirakis)
@@ -258,7 +241,7 @@ def weighted_sample_without_replacement(
 
 
 def get_random_weighted_endpoints(
-    transformed_relays: typing.Mapping, number_of_endpoints: int
+    filtered_relays: typing.Mapping, number_of_endpoints: int
 ) -> typing.Sequence:
     """
     Returns a sequence of randomly selected endpoints from a given
@@ -278,9 +261,9 @@ def get_random_weighted_endpoints(
     """
     population = []
     weights = []
-    for relay, relay_data in transformed_relays.items():
-        population.append(relay)
-        weights.append(relay_data["weight"])
+    for relay in filtered_relays["wireguard"]["relays"]:
+        population.append(relay["hostname"])
+        weights.append(relay["weight"])
 
     return weighted_sample_without_replacement(
         population, weights, number_of_endpoints
@@ -291,11 +274,11 @@ if __name__ == "__main__":
     args = parse_cli_arguments()
 
     data = init_json_loader(args.filename)
-    relays_as_list = filter_relays(args, data)
-    relays_as_dict = transform_relays(relays_as_list)
-    endpoints = get_random_weighted_endpoints(
-        relays_as_dict, args.NUMBER_OF_ENDPOINTS
+    desired_relays = filter_relays(args, data)
+
+    endpoint_hostnames = get_random_weighted_endpoints(
+        desired_relays, args.NUMBER_OF_ENDPOINTS
     )
 
-    for endpoint in endpoints:
-        print(endpoint)
+    for hostname in endpoint_hostnames:
+        print(hostname)

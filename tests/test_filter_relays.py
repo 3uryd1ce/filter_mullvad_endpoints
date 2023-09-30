@@ -9,20 +9,28 @@ from random_mullvad_endpoints import filter_relays, parse_cli_arguments
 
 test_json = """
 {
+  "locations": {
+    "it-rom": {
+      "country": "Italy",
+      "city": "Rome",
+      "latitude": 41.861,
+      "longitude": 12.52
+    },
+    "se-sto": {
+      "country": "Sweden",
+      "city": "Stockholm",
+      "latitude": 59.3289,
+      "longitude": 18.0649
+    },
+    "za-jnb": {
+      "country": "South Africa",
+      "city": "Johannesburg",
+      "latitude": -26.195246,
+      "longitude": 28.034088
+    }
+  },
   "wireguard": {
     "relays": [
-      {
-        "hostname": "se-sto-wg-014",
-        "location": "se-sto",
-        "active": false,
-        "owned": true,
-        "provider": "31173",
-        "ipv4_addr_in": "185.195.233.68",
-        "include_in_country": true,
-        "weight": 100,
-        "public_key": "V6RHmYEXDDXvCPZENmhwk5VEn6KgSseTFHw/IkXFzGg=",
-        "ipv6_addr_in": "2a03:1b20:4:f011::a28f"
-      },
       {
         "hostname": "it-rom-wg-001",
         "location": "it-rom",
@@ -36,6 +44,18 @@ test_json = """
         "ipv6_addr_in": "2a05:4140:15::a01f"
       },
       {
+        "hostname": "se-sto-wg-014",
+        "location": "se-sto",
+        "active": false,
+        "owned": true,
+        "provider": "31173",
+        "ipv4_addr_in": "185.195.233.68",
+        "include_in_country": true,
+        "weight": 100,
+        "public_key": "V6RHmYEXDDXvCPZENmhwk5VEn6KgSseTFHw/IkXFzGg=",
+        "ipv6_addr_in": "2a03:1b20:4:f011::a28f"
+      },
+      {
         "hostname": "za-jnb-wg-002",
         "location": "za-jnb",
         "active": true,
@@ -47,7 +67,16 @@ test_json = """
         "public_key": "lTq6+yUYfYsXwBpj/u3LnYqpLhW8ZJXQQ19N/ybP2B8=",
         "ipv6_addr_in": "2a02:6ea0:f207::a02f"
       }
-    ]
+    ],
+    "port_ranges": [
+      [53, 53],
+      [123, 123],
+      [4000, 33433],
+      [33565, 51820],
+      [52000, 60000]
+    ],
+    "ipv4_gateway": "10.64.0.1",
+    "ipv6_gateway": "fc00:bbbb:bbbb:bb01::1"
   }
 }
 """
@@ -62,7 +91,7 @@ def test_no_filter(monkeypatch):
     arguments = parse_cli_arguments()
     filtered_relays = filter_relays(arguments, json_as_dict)
 
-    assert len(filtered_relays) == 3
+    assert len(filtered_relays["wireguard"]["relays"]) == 3
 
 
 def test_active_relays(monkeypatch):
@@ -73,9 +102,10 @@ def test_active_relays(monkeypatch):
     )
     arguments = parse_cli_arguments()
     filtered_relays = filter_relays(arguments, json_as_dict)
+    wireguard_relays = filtered_relays["wireguard"]["relays"]
 
-    assert len(filtered_relays) == 1
-    assert filtered_relays[0]["active"] is True
+    assert len(wireguard_relays) == 1
+    assert wireguard_relays[0]["active"] is True
 
 
 def test_owned_relays(monkeypatch):
@@ -86,9 +116,10 @@ def test_owned_relays(monkeypatch):
     )
     arguments = parse_cli_arguments()
     filtered_relays = filter_relays(arguments, json_as_dict)
+    wireguard_relays = filtered_relays["wireguard"]["relays"]
 
-    assert len(filtered_relays) == 1
-    assert filtered_relays[0]["owned"] is True
+    assert len(wireguard_relays) == 1
+    assert wireguard_relays[0]["owned"] is True
 
 
 def test_relay_one_location(monkeypatch):
@@ -99,9 +130,10 @@ def test_relay_one_location(monkeypatch):
     )
     arguments = parse_cli_arguments()
     filtered_relays = filter_relays(arguments, json_as_dict)
+    wireguard_relays = filtered_relays["wireguard"]["relays"]
 
-    assert len(filtered_relays) == 1
-    assert filtered_relays[0]["location"] == "it-rom"
+    assert len(wireguard_relays) == 1
+    assert wireguard_relays[0]["location"] == "it-rom"
 
 
 def test_relay_two_locations(monkeypatch):
@@ -112,10 +144,12 @@ def test_relay_two_locations(monkeypatch):
     )
     arguments = parse_cli_arguments()
     filtered_relays = filter_relays(arguments, json_as_dict)
+    wireguard_relays = filtered_relays["wireguard"]["relays"]
 
-    assert len(filtered_relays) == 2
+    assert len(wireguard_relays) == 2
+
     acceptable_locations = ["it-rom", "za-jnb"]
-    for relay in filtered_relays:
+    for relay in wireguard_relays:
         assert relay["location"] in acceptable_locations
 
 
@@ -127,9 +161,10 @@ def test_relay_one_provider(monkeypatch):
     )
     arguments = parse_cli_arguments()
     filtered_relays = filter_relays(arguments, json_as_dict)
+    wireguard_relays = filtered_relays["wireguard"]["relays"]
 
-    assert len(filtered_relays) == 1
-    assert filtered_relays[0]["provider"] == "DataPacket"
+    assert len(wireguard_relays) == 1
+    assert wireguard_relays[0]["provider"] == "DataPacket"
 
 
 def test_relay_two_providers(monkeypatch):
@@ -140,10 +175,12 @@ def test_relay_two_providers(monkeypatch):
     )
     arguments = parse_cli_arguments()
     filtered_relays = filter_relays(arguments, json_as_dict)
+    wireguard_relays = filtered_relays["wireguard"]["relays"]
 
-    assert len(filtered_relays) == 2
+    assert len(wireguard_relays) == 2
+
     acceptable_providers = ["DataPacket", "31173"]
-    for relay in filtered_relays:
+    for relay in wireguard_relays:
         assert relay["provider"] in acceptable_providers
 
 
@@ -155,6 +192,8 @@ def test_multiple_filters(monkeypatch):
     )
     arguments = parse_cli_arguments()
     filtered_relays = filter_relays(arguments, json_as_dict)
-    assert len(filtered_relays) == 1
-    assert filtered_relays[0]["provider"] == "DataPacket"
-    assert filtered_relays[0]["location"] == "za-jnb"
+    wireguard_relays = filtered_relays["wireguard"]["relays"]
+
+    assert len(wireguard_relays) == 1
+    assert wireguard_relays[0]["provider"] == "DataPacket"
+    assert wireguard_relays[0]["location"] == "za-jnb"
