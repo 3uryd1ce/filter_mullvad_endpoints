@@ -217,7 +217,6 @@ def create_filtered_json(
         If json_data was the only parameter provided, the function
         simply returns json_data as is.
     """
-
     try:
         filter_opts = [cli_args, allowed_hostnames]
         assert any(opt is not None for opt in filter_opts)
