@@ -218,14 +218,11 @@ def create_filtered_json(
         simply returns json_data as is.
     """
 
-    filter_opts = [cli_args, allowed_hostnames]
-    active_opts = 0
-    for opt in filter_opts:
-        if opt:
-            active_opts += 1
-    if active_opts == 0:
+    try:
+        filter_opts = [cli_args, allowed_hostnames]
+        assert any(opt is not None for opt in filter_opts)
+    except AssertionError:
         return json_data
-    del filter_opts, active_opts
 
     new_json = copy.deepcopy(json_data)
     new_json["wireguard"]["relays"] = []
