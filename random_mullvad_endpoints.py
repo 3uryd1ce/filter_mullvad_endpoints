@@ -75,7 +75,7 @@ def parse_cli_arguments() -> argparse.Namespace:
     )
     argparser.add_argument(
         "-n",
-        help="Number of matching endpoints to return.",
+        help="Number of matching endpoints to return (5 by default).",
         dest="NUMBER_OF_ENDPOINTS",
         metavar="NUMBER_OF_ENDPOINTS",
         type=int,
