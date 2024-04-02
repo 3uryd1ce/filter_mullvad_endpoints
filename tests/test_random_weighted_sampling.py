@@ -72,6 +72,28 @@ def test_empty_weights(create_sample):
         weighted_sample_without_replacement(population, [], k)
 
 
+def test_bad_population_type(create_sample):
+    """
+    Make sure that weighted_sample_without_replacement throws an
+    exception when population is the wrong type entirely.
+    """
+    _, weights, k = create_sample
+    population = 1
+    with pytest.raises(TypeError):
+        weighted_sample_without_replacement(population, weights, k)
+
+
+def test_bad_weights_type(create_sample):
+    """
+    Make sure that weighted_sample_without_replacement throws an
+    exception when weights is the wrong type entirely.
+    """
+    population, _, k = create_sample
+    weights = 1
+    with pytest.raises(TypeError):
+        weighted_sample_without_replacement(population, weights, k)
+
+
 def test_zero_k(create_sample):
     """
     Make sure that weighted_sample_without_replacement throws an
@@ -117,6 +139,17 @@ def test_large_k(create_sample):
     sample = weighted_sample_without_replacement(population, weights, k)
     assert len(sample) == len(population)
     assert set(sample) == set(population)
+
+
+def test_bad_k_type(create_sample):
+    """
+    Make sure that weighted_sample_without_replacement throws an
+    exception when k is the wrong type entirely.
+    """
+    population, weights, _ = create_sample
+    k = []
+    with pytest.raises(TypeError):
+        weighted_sample_without_replacement(population, weights, k)
 
 
 def test_mismatched_weights_and_population(create_sample):
