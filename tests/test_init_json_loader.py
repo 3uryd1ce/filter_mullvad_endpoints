@@ -55,11 +55,8 @@ def test_invalid_file():
     an invalid file path.
     """
     invalid_json_file_path = "invalid.json"
-    try:
+    with pytest.raises(FileNotFoundError):
         init_json_loader(invalid_json_file_path)
-        assert False, "Expected FileNotFoundError"
-    except FileNotFoundError:
-        pass
 
 
 def test_invalid_file_object():
@@ -69,11 +66,8 @@ def test_invalid_file_object():
     """
     invalid_json_data = '{"key": "value"'
     invalid_json_file_object = StringIO(invalid_json_data)
-    try:
+    with pytest.raises(json.JSONDecodeError):
         init_json_loader(invalid_json_file_object)
-        assert False, "Expected JSONDecodeError"
-    except json.JSONDecodeError:
-        pass
 
 
 def test_empty_file_object():
@@ -82,11 +76,8 @@ def test_empty_file_object():
     an empty file-like object.
     """
     empty_json_file_object = StringIO()
-    try:
+    with pytest.raises(json.JSONDecodeError):
         init_json_loader(empty_json_file_object)
-        assert False, "Expected JSONDecodeError"
-    except json.JSONDecodeError:
-        pass
 
 
 def test_incorrect_type():
@@ -94,8 +85,5 @@ def test_incorrect_type():
     Make sure that init_json_loader throws an exception when provided
     an argument with a type that is incorrect.
     """
-    try:
+    with pytest.raises(AttributeError):
         init_json_loader(123)
-        assert False, "Expected AttributeError"
-    except AttributeError:
-        pass
