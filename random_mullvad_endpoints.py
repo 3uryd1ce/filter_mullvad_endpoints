@@ -288,15 +288,29 @@ def weighted_sample_without_replacement(
     if len(population) != len(weights):
         raise ValueError("population and weights must be equal length.")
 
+    v = []
     for weight in weights:
         if not isinstance(weight, int):
             raise TypeError("weights must be integers.")
-        if weight <= 0:
-            raise ValueError(
-                "weights must be positive integers greater than zero."
-            )
 
-    v = [random.random() ** (1 / w) for w in weights]
+        # XXX: dumb hack to make the program work with weights less than
+        # or equal to 0. The problem is that division by zero is invalid,
+        # and weights below 0 screw up the weighting system. A random number
+        # between 0 and 1 to a negative power will always be greater than
+        # 1. This results in something counterintuitive: a number with
+        # a negative weight will actually be prioritized over those with
+        # positive weights.
+        #
+        # Rather than completely failing to use the data, which probably
+        # isn't useful... convert everything less than or equal to 0
+        # back to 1. This should appear in the documentation so that this
+        # limitation is more visible, otherwise people may be expecting
+        # this program to handle negative weights in a different way.
+        if weight <= 0:
+            weight = 1
+
+        v.append(random.random() ** (1 / weight))
+
     order = sorted(range(len(population)), key=lambda i: v[i])
     return [population[i] for i in order[-k:]]
 
