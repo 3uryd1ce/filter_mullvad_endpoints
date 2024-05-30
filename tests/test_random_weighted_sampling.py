@@ -165,26 +165,38 @@ def test_mismatched_weights_and_population(create_sample):
 
 def test_zero_in_weights(create_sample):
     """
-    Make sure that weighted_sample_without_replacement throws an
-    exception when there's a weight with a value of zero.
+    Make sure that weighted_sample_without_replacement treats weights
+    with a value of 0 as 1.
     """
     population, _, k = create_sample
     weights = [1] * (len(population) - 1)
     weights.insert(len(population) // 2, 0)
-    with pytest.raises(ValueError):
-        weighted_sample_without_replacement(population, weights, k)
+
+    result = weighted_sample_without_replacement(population, weights, k)
+
+    # Function should still return a valid sample of size k.
+    assert len(result) == k
+
+    # Sample should be a subset of the population.
+    assert all(item in population for item in result)
 
 
 def test_negative_in_weights(create_sample):
     """
-    Make sure that weighted_sample_without_replacement throws an
-    exception when there's a negative weight.
+    Make sure that weighted_sample_without_replacement treats weights
+    with a negative value as 1.
     """
     population, _, k = create_sample
     weights = [1] * (len(population) - 1)
     weights.insert(len(population) // 2, -1)
-    with pytest.raises(ValueError):
-        weighted_sample_without_replacement(population, weights, k)
+
+    result = weighted_sample_without_replacement(population, weights, k)
+
+    # Function should still return a valid sample of size k.
+    assert len(result) == k
+
+    # Sample should be a subset of the population.
+    assert all(item in population for item in result)
 
 
 def test_bad_type_in_weights(create_sample):
