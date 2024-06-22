@@ -357,10 +357,9 @@ if __name__ == "__main__":
     if args.PRINT_HOSTNAMES_ONLY:
         for hostname in endpoint_hostnames:
             print(hostname)
-        sys.exit(0)
-
-    filtered_json = create_filtered_json(
-        filtered_json, allowed_hostnames=endpoint_hostnames
-    )
-    json.dump(filtered_json, sys.stdout)
-    print()
+    else:
+        filtered_json = create_filtered_json(
+            filtered_json, allowed_hostnames=endpoint_hostnames
+        )
+        json.dump(filtered_json, sys.stdout)
+        print()
