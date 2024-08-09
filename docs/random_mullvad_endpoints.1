@@ -1,0 +1,78 @@
+.Dd August 8, 2024
+.Dt RANDOM_MULLVAD_ENDPOINTS 1
+.Os
+.Sh NAME
+.Nm random_mullvad_endpoints
+.Nd extracts data corresponding to random Mullvad VPN endpoints
+.Sh SYNOPSIS
+.Nm random_mullvad_endpoints
+.Op Fl ahoN
+.Op Fl l Ar regexp
+.Op Fl n Ar integer
+.Op Fl p Ar regexp
+.Op Ar file
+.Sh DESCRIPTION
+The
+.Nm
+utility processes JSON provided by Mullvad's API and extracts data from
+it. By default, data is extracted for 5 random endpoints. Endpoints are
+selected using weighted random sampling without replacement.
+.Pp
+If
+.Ar file
+is a single dash
+.Pq Sq -
+or absent,
+.Nm
+reads from the standard input.
+.Pp
+The options are as follows:
+.Bl -tag -width Ds
+.It Fl a
+Only include active Mullvad endpoints.
+.It Fl h
+Print usage information and exit.
+.It Fl l Ar regexp
+Only include endpoints with locations that match the given regular
+expression.
+.It Fl n Ar integer
+Number of endpoints to select and return data for (defaults to 5).
+.It Fl N
+Print the hostname of each endpoint rather than the full JSON data.
+.It Fl o
+Only include Mullvad endpoints that are owned by Mullvad. Ownership
+means servers that Mullvad has physical control of, as opposed to
+servers that are rented.
+.It Fl p Ar regexp
+Only include providers that match the given regular expression.
+.El
+.Sh EXIT STATUS
+The
+.Nm
+utility exits 0 on success, and >0 if an error occurs.
+.Sh EXAMPLES
+Randomly select 5 Mullvad VPN endpoints from the mullvad.json file that
+are active and located in the United States. Print out the corresponding
+JSON.
+.Pp
+.Dl $ random_mullvad_endpoints -al `^us-[a-z]{3}$' mullvad.json
+.Pp
+Randomly select 10 Mullvad VPN endpoints from anywhere in the world,
+reading from STDIN. Print out only the hostnames.
+.Pp
+.Dl $ cat mullvad.json | random_mullvad_endpoints -n 10 -N
+.Pp
+Randomly select 5 Mullvad VPN endpoints from anywhere in the world, but
+they must be owned by Mullvad and the provider must be 31173. Print out
+the corresponding JSON.
+.Pp
+.Dl $ random_mullvad_endpoints -op `^31173$' mullvad.json
+.Pp
+.Sh SEE ALSO
+.Bl -tag -width Ds
+.It Lk https://api.mullvad.net/public/documentation/ "Mullvad API Documentation"
+.It Lk https://api.mullvad.net/public/relays/wireguard/v2 "WireGuard Relays"
+.El
+.Sh AUTHORS
+Written and maintained by
+.An Ashlen Aq Mt dev@anthes.is .
