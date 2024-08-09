@@ -44,6 +44,15 @@ def test_owned_only(monkeypatch):
     assert arguments.OWNED_ONLY is True
 
 
+def test_print_all_endpoints(monkeypatch):
+    monkeypatch.setattr(
+        "sys.argv",
+        ["script.py", "-A"],
+    )
+    arguments = parse_cli_arguments()
+    assert arguments.PRINT_ALL_ENDPOINTS is True
+
+
 def test_location_regex(monkeypatch):
     regex = "^it-(mil|rom)$"
     monkeypatch.setattr(

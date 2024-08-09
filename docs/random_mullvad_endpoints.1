@@ -30,6 +30,11 @@ The options are as follows:
 .Bl -tag -width Ds
 .It Fl a
 Only include active Mullvad endpoints.
+.It Fl A
+Include all matching Mullvad endpoints, rather than a limited number.
+This means that
+.Fl n
+will be ignored.
 .It Fl h
 Print usage information and exit.
 .It Fl l Ar regexp
@@ -37,6 +42,9 @@ Only include endpoints with locations that match the given regular
 expression.
 .It Fl n Ar integer
 Number of endpoints to select and return data for (defaults to 5).
+Will be ignored if
+.Fl A
+was provided.
 .It Fl N
 Print the hostname of each endpoint rather than the full JSON data.
 .It Fl o
@@ -67,6 +75,10 @@ they must be owned by Mullvad and the provider must be 31173. Print out
 the corresponding JSON.
 .Pp
 .Dl $ random_mullvad_endpoints -op `^31173$' mullvad.json
+.Pp
+Print out all endpoint hostnames in a random order.
+.Pp
+.Dl $ random_mullvad_endpoints -AN mullvad.json
 .Pp
 .Sh SEE ALSO
 .Bl -tag -width Ds

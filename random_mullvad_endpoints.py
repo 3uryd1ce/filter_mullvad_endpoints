@@ -56,6 +56,12 @@ def parse_cli_arguments() -> argparse.Namespace:
         dest="ACTIVE_ONLY",
     )
     argparser.add_argument(
+        "-A",
+        help="Print out all Mullvad endpoints, rather than a subset.",
+        action="store_true",
+        dest="PRINT_ALL_ENDPOINTS",
+    )
+    argparser.add_argument(
         "-o",
         help="Only select Mullvad endpoints that are owned by Mullvad.",
         action="store_true",
@@ -350,9 +356,15 @@ if __name__ == "__main__":
 
     data = init_json_loader(args.filename)
     filtered_json = create_filtered_json(data, args)
-    endpoint_hostnames = get_random_weighted_endpoints(
-        filtered_json, args.NUMBER_OF_ENDPOINTS
-    )
+
+    if args.PRINT_ALL_ENDPOINTS:
+        endpoint_hostnames = get_random_weighted_endpoints(
+            filtered_json, len(filtered_json["wireguard"]["relays"])
+        )
+    else:
+        endpoint_hostnames = get_random_weighted_endpoints(
+            filtered_json, args.NUMBER_OF_ENDPOINTS
+        )
 
     if args.PRINT_HOSTNAMES_ONLY:
         for hostname in endpoint_hostnames:

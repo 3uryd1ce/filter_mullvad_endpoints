@@ -35,6 +35,13 @@ The options are as follows:
 
 > Only include active Mullvad endpoints.
 
+**-A**
+
+> Include all matching Mullvad endpoints, rather than a limited number.
+> This means that
+> **-n**
+> will be ignored.
+
 **-h**
 
 > Print usage information and exit.
@@ -47,6 +54,9 @@ The options are as follows:
 **-n** *integer*
 
 > Number of endpoints to select and return data for (defaults to 5).
+> Will be ignored if
+> **-A**
+> was provided.
 
 **-N**
 
@@ -86,6 +96,10 @@ they must be owned by Mullvad and the provider must be 31173. Print out
 the corresponding JSON.
 
 	$ random_mullvad_endpoints -op `^31173$' mullvad.json
+
+Print out all endpoint hostnames in a random order.
+
+	$ random_mullvad_endpoints -AN mullvad.json
 
 # SEE ALSO
 
