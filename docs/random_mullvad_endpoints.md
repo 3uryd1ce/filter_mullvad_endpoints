@@ -97,3 +97,18 @@ the corresponding JSON.
 
 Written and maintained by
 Ashlen &lt;[dev@anthes.is](mailto:dev@anthes.is)&gt;.
+
+# CAVEATS
+
+Weights less than or equal to 0 are handled by treating them as if they
+were actually 1. This is for two reasons, both ultimately related to the
+algorithm chosen to handle weighted sampling without replacement
+(Efraimidis and Spirakis).
+
+The first reason is that a weight of zero will lead to a division by
+zero error.
+
+The second reason is that negative weights mess up the weighting system.
+Due to the math involved, negative weights would always end up being
+prioritized over any positive weight, which is unlikely to be the
+desired outcome.
