@@ -6,10 +6,6 @@ criteria. These include regular expressions for the location and
 provider. To present the final list of hostnames in a random order,
 it uses weighted random sampling without replacement.
 
-This tool is still under development. It's usable as is, but consider
-the API unstable. When it's ready for public consumption, I'll
-create a release.
-
 ## Example usage
 
 First, clone the repository and download the necessary JSON data.
