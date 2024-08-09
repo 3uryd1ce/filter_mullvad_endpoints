@@ -24,7 +24,7 @@ You can use [mandoc](https://mandoc.bsd.lv/) to read the manual
 page provided in the `docs` directory.
 
 ```shell
-$ mandoc -l docs/wg_to_hostname_if.1
+$ mandoc -l docs/random_mullvad_endpoints.1
 ```
 
 There is also a generated Markdown file in the same directory so
