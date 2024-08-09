@@ -67,9 +67,3 @@ $ mandoc -l docs/random_mullvad_endpoints.1
 There is also a generated Markdown file in the same directory so
 you can [read the man page on
 GitHub](https://github.com/maybebyte/random_mullvad_endpoints/blob/main/docs/random_mullvad_endpoints.md).
-
-## TODOs
-
-- Documentation:
-  - README.md
-- Packaging (flit?).
