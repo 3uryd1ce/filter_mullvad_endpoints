@@ -22,7 +22,6 @@ $ python3 -m pytest
 
 - Documentation:
   - README.md (example usage, documentation links).
-  - man page.
 - Features:
   - A way to print the entire list of hostnames rather than
     a subset of it.
