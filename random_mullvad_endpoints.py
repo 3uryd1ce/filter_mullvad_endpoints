@@ -57,7 +57,7 @@ def parse_cli_arguments() -> argparse.Namespace:
     )
     argparser.add_argument(
         "-A",
-        help="Print out all Mullvad endpoints, rather than a subset.",
+        help="Include all matching Mullvad endpoints.",
         action="store_true",
         dest="PRINT_ALL_ENDPOINTS",
     )
