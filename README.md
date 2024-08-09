@@ -72,7 +72,4 @@ GitHub](https://github.com/maybebyte/random_mullvad_endpoints/blob/main/docs/ran
 
 - Documentation:
   - README.md
-- Features:
-  - A way to print the entire list of hostnames rather than
-    a subset of it.
 - Packaging (flit?).
